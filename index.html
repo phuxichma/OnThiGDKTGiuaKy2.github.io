@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn tập GDKT & PL 12 - Giữa Kỳ 2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Ôn tập GDKT & PL 12</h1>
+            <p>Học kỳ 2 - Giữa kỳ</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab('part1')">Phần I: Trắc Nghiệm</button>
+            <button class="tab-btn" onclick="openTab('part2')">Phần II: Đúng/Sai</button>
+        </div>
+
+        <div id="part1" class="tab-content active">
+            <div class="info-card">
+                <h3>Phần I: Trắc nghiệm nhiều lựa chọn</h3>
+                <p>Chọn phương án đúng nhất cho mỗi câu hỏi.</p>
+                <div class="progress-bar">
+                    <div id="progress-part1" class="progress" style="width: 0%"></div>
+                </div>
+                <p class="score">Đúng: <span id="score-part1">0</span> / <span id="total-part1">0</span></p>
+            </div>
+            <div id="questions-part1" class="questions-list"></div>
+        </div>
+
+        <div id="part2" class="tab-content">
+            <div class="info-card">
+                <h3>Phần II: Trắc nghiệm Đúng/Sai</h3>
+                <p>Chọn Đúng hoặc Sai cho mỗi ý a, b, c, d.</p>
+                <div class="progress-bar">
+                    <div id="progress-part2" class="progress" style="width: 0%"></div>
+                </div>
+                <p class="score">Điểm: <span id="score-part2">0</span> / <span id="total-part2">0</span></p>
+            </div>
+            <div id="questions-part2" class="questions-list"></div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
