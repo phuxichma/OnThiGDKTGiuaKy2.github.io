@@ -14,6 +14,63 @@ let state = {
     part2: { score: 0, total: 0, answered: 0 }
 };
 
+// Assets
+const assets = {
+    goodImgs: ['Good1.png', 'Good2.png', 'Good3.png', 'Good4.png', 'good36.jpg'],
+    wrongImgs: ['Wrong1.png', 'Wrong2.png', 'Wrong3.png', 'Wrong4.png', 'Wrong5.png', 'Wrong6.png'],
+    goodSfx: ['Good.mp3'], // Generic good sound
+    wrongSfx: ['Wrong1.mp3', 'Wrong2.mp3']
+};
+
+function playRandomSfx(isCorrect) {
+    const list = isCorrect ? assets.goodSfx : assets.wrongSfx;
+    const rand = list[Math.floor(Math.random() * list.length)];
+    const audio = new Audio(`sfx/${rand}`);
+    audio.play().catch(e => console.log('Audio play failed:', e));
+}
+
+function showFeedbackImage(isCorrect) {
+    const list = isCorrect ? assets.goodImgs : assets.wrongImgs;
+    const rand = list[Math.floor(Math.random() * list.length)];
+    const overlay = document.getElementById('feedback-overlay');
+    const img = document.getElementById('feedback-img');
+
+    img.src = `pics/${rand}`;
+    overlay.className = 'feedback-overlay active';
+    img.className = 'feedback-img show'; // Triggers animation
+
+    // Hide after 0.36s (animation duration)
+    setTimeout(() => {
+        overlay.className = 'feedback-overlay';
+        img.className = 'feedback-img';
+    }, 360);
+}
+
+function showFinished() {
+    const overlay = document.getElementById('feedback-overlay');
+    const img = document.getElementById('feedback-img');
+
+    img.src = `pics/Finished.png`;
+    overlay.className = 'feedback-overlay active finished';
+    // img.className = 'feedback-img show'; // No fade out animation for finished, just show
+
+    const audio = new Audio(`sfx/Good.mp3`);
+    audio.play().catch(e => console.log('Audio play failed:', e));
+
+    setTimeout(() => {
+        overlay.classList.remove('active', 'finished');
+    }, 3000);
+}
+
+function checkCompletion() {
+    // Check if total answered equals total questions
+    // Note: part1.total is number of questions. part2.total is number of TF items.
+    // part1.answered and part2.answered are counts of user answers.
+    if (state.part1.answered === state.part1.total && state.part2.answered === state.part2.total) {
+        setTimeout(showFinished, 500); // Small delay after last answer feedback
+    }
+}
+
 function init() {
     // Setup Part 1
     if (typeof part1Data !== 'undefined' && part1Data.length > 0) {
@@ -83,13 +140,18 @@ window.checkPart1 = function (id, selected, btn) {
         btn.classList.add('correct');
         state.part1.correct++;
         showToast("Chính xác!", "success");
+        playRandomSfx(true);
+        showFeedbackImage(true);
     } else {
         btn.classList.add('incorrect');
         if (buttons[correctBtnIndex]) buttons[correctBtnIndex].classList.add('correct');
         showToast(`Sai rồi. Đáp án đúng là ${q.a}`, "error");
+        playRandomSfx(false);
+        showFeedbackImage(false);
     }
     state.part1.answered++;
     updateUI();
+    checkCompletion();
 }
 
 function renderPart2() {
@@ -136,18 +198,23 @@ window.checkPart2 = function (qId, itemId, userAns, btn) {
         resultDiv.innerHTML = '<span class="correct-text">✓</span>';
         btn.style.borderColor = 'var(--primary-light)';
         btn.style.borderWidth = '2px';
+        playRandomSfx(true);
+        showFeedbackImage(true);
     } else {
         resultDiv.innerHTML = '<span class="wrong-text">✕</span>';
         const otherBtn = userAns ? btns[1] : btns[0];
         otherBtn.style.border = '2px solid var(--primary-light)';
         otherBtn.style.color = 'var(--primary-dark)';
         otherBtn.style.fontWeight = 'bold';
+        playRandomSfx(false);
+        showFeedbackImage(false);
     }
 
     if (explDiv) explDiv.style.display = 'block';
 
     state.part2.answered++;
     updateUI();
+    checkCompletion();
 }
 
 function showToast(message, type) {
